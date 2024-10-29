@@ -105,14 +105,14 @@ function generateMediumExpression() {
 
 function generateHardExpression() {
   let type = Math.random();
-  
-  if (type < 0.25) {
+
+  if (type < 0.5) {
     // Pergunta de raiz quadrada
     let num = Math.floor(Math.random() * 100) + 1;
     correctAnswer = Math.round(Math.sqrt(num)); // Arredonda para o número inteiro mais próximo
     return `Qual é o número inteiro mais próximo da raiz quadrada de ${num}?`;
   } else {
-    // Soma, subtração, multiplicação ou divisão
+    // Soma, subtração, multiplicação ou divisão simples
     let num1 = Math.floor(Math.random() * 50) + 1;
     let num2 = Math.floor(Math.random() * 50) + 1;
     let operator = ['+', '-', '*', '/'][Math.floor(Math.random() * 4)];
