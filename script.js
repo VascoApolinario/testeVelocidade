@@ -15,7 +15,7 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       clearInterval(interval);
-      resetGame();
+      endGame();
     }
   }, 1000);
 }
@@ -139,6 +139,9 @@ function checkAnswer(selected, difficultyLevel) {
   if (selected === correctAnswer) {
     let pointsToAdd = difficultyLevel;
     score += pointsToAdd;
+
+    // Add time for correct answer but cap at 40 seconds
+    timeLimit = Math.min(40, timeLimit + 2);
   } else {
     lives -= 1;
     updateLives();
@@ -157,17 +160,22 @@ function updateLives() {
   livesContainer.innerHTML = "★".repeat(lives) + "☆".repeat(3 - lives);
 }
 
+function calculateIQ() {
+  // Using a logarithmic scale to increase IQ dynamically based on score
+  let baseIQ = 70;
+  let iq = baseIQ + Math.round(30 * Math.log10(score + 1));
+  return Math.min(160, iq); // Cap IQ to 160 for fun
+}
+
 function endGame() {
   clearInterval(interval);
   document.getElementById("lives").style.display = "none";
   document.getElementById("question").style.display = "none";
   document.querySelector(".answers").style.display = "none";
   
-  let iq = 70;
-  if (score >= 100) iq = 115;
-  if (score >= 120) iq = 130;
+  let iq = calculateIQ();
 
-  const resultText = `Seu score é: ${score}<br>Sua IQ é: ${iq}`;
+  const resultText = `O seu score é: ${score}<br>O seu QI é de: ${iq}`;
   document.getElementById("result").innerHTML = resultText;
   document.getElementById("result").style.display = "block";
 }
