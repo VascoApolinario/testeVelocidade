@@ -36,7 +36,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .timer {
@@ -49,18 +49,6 @@ h1 {
   font-size: 24px;
   color: #4a90e2;
   font-weight: bold;
-}
-
-.lives {
-  font-size: 24px;
-  color: #ffc107;
-  margin-bottom: 20px;
-}
-
-.star {
-  font-size: 28px;
-  color: #ffc107;
-  padding: 0 5px;
 }
 
 .question-box {
@@ -96,10 +84,4 @@ h1 {
 .answer:hover {
   background-color: #cceeff;
   transform: translateY(-2px);
-}
-
-.result {
-  font-size: 24px;
-  color: #333;
-  margin-top: 20px;
 }

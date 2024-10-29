@@ -2,6 +2,8 @@ let currentQuestion = 1;
 let timeLimit = 40;
 let interval;
 let correctAnswer = 4;
+let score = 0;
+let lives = 3;
 
 function startTimer() {
   let timeLeft = timeLimit;
@@ -13,7 +15,6 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       clearInterval(interval);
-      alert("Tempo esgotado! Tente novamente.");
       resetGame();
     }
   }, 1000);
@@ -22,6 +23,14 @@ function startTimer() {
 function resetGame() {
   currentQuestion = 1;
   timeLimit = 40;
+  score = 0;
+  lives = 3;
+  updateLives();
+  document.getElementById("score").textContent = `Pontos: ${score}`;
+  document.getElementById("result").style.display = "none";
+  document.getElementById("lives").style.display = "flex";
+  document.getElementById("question").style.display = "block";
+  document.querySelector(".answers").style.display = "grid";
   startNewQuestion();
 }
 
@@ -42,14 +51,24 @@ function startNewQuestion() {
 function generateQuestion() {
   let questionText;
   let answers;
+  let difficultyLevel;
 
-  if (currentQuestion < 100) {
+  if (currentQuestion < 50) {
+    difficultyLevel = 1;
     let num1 = Math.floor(Math.random() * 10) + 1;
     let num2 = Math.floor(Math.random() * 10) + 1;
     correctAnswer = num1 + num2;
     questionText = `Qual é o resultado de ${num1} + ${num2}?`;
     answers = generateAnswers(correctAnswer);
+  } else if (currentQuestion < 100) {
+    difficultyLevel = 2;
+    let num1 = Math.floor(Math.random() * 50) + 1;
+    let num2 = Math.floor(Math.random() * 50) + 1;
+    correctAnswer = num1 + num2;
+    questionText = `Qual é o resultado de ${num1} + ${num2}?`;
+    answers = generateAnswers(correctAnswer);
   } else {
+    difficultyLevel = 3;
     let num = Math.floor(Math.random() * 100) + 1;
     correctAnswer = Math.sqrt(num).toFixed(2);
     questionText = `Qual é a raiz quadrada de ${num}?`;
@@ -60,6 +79,7 @@ function generateQuestion() {
 
   document.querySelectorAll(".answer").forEach((el, index) => {
     el.textContent = answers[index];
+    el.onclick = () => checkAnswer(answers[index], difficultyLevel);
   });
 
   currentQuestion++;
@@ -76,14 +96,41 @@ function generateAnswers(correctAnswer) {
   return answers.sort(() => Math.random() - 0.5);
 }
 
-function checkAnswer(selected) {
-  if (selected == correctAnswer) {
-    alert("Correto!");
-    startNewQuestion();
+function checkAnswer(selected, difficultyLevel) {
+  if (parseFloat(selected) === parseFloat(correctAnswer)) {
+    let pointsToAdd = difficultyLevel;
+    score += pointsToAdd;
   } else {
-    alert("Incorreto, tente novamente!");
-    resetGame();
+    lives -= 1;
+    updateLives();
+    if (lives === 0) {
+      endGame();
+      return;
+    }
+    score -= 1;
   }
+  document.getElementById("score").textContent = `Pontos: ${score}`;
+  startNewQuestion();
+}
+
+function updateLives() {
+  const livesContainer = document.getElementById("lives");
+  livesContainer.innerHTML = "★".repeat(lives) + "☆".repeat(3 - lives);
+}
+
+function endGame() {
+  clearInterval(interval);
+  document.getElementById("lives").style.display = "none";
+  document.getElementById("question").style.display = "none";
+  document.querySelector(".answers").style.display = "none";
+  
+  let iq = 70;
+  if (score >= 100) iq = 115;
+  if (score >= 120) iq = 130;
+
+  const resultText = `Seu score é: ${score}<br>Sua IQ é: ${iq}`;
+  document.getElementById("result").innerHTML = resultText;
+  document.getElementById("result").style.display = "block";
 }
 
 window.onload = startNewQuestion;
