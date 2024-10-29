@@ -66,7 +66,7 @@ function generateQuestion() {
 
   document.getElementById("question").textContent = questionText;
 
-  answers = generateAnswers(correctAnswer, difficultyLevel === 3);
+  answers = generateAnswers(correctAnswer, difficultyLevel === 3 && questionText.includes("raiz quadrada"));
   
   document.querySelectorAll(".answer").forEach((el, index) => {
     el.textContent = answers[index];
@@ -131,19 +131,21 @@ function generateHardExpression() {
   }
 }
 
-function generateAnswers(correctAnswer, isReal) {
+function generateAnswers(correctAnswer, isSquareRoot) {
   let answers = [correctAnswer];
-  let min = isReal ? -10 : -5;
-  let max = isReal ? 10 : 5;
+  let min = isSquareRoot ? correctAnswer - 3 : -5;
+  let max = isSquareRoot ? correctAnswer + 3 : 5;
 
   while (answers.length < 4) {
     let randomAnswer;
-    if (isReal) {
-      randomAnswer = parseFloat((Math.random() * (max - min) + min + correctAnswer).toFixed(2));
+    if (isSquareRoot) {
+      randomAnswer = correctAnswer + Math.floor(Math.random() * (max - min + 1) + min);
+    } else if (typeof correctAnswer === "number" && !Number.isInteger(correctAnswer)) {
+      randomAnswer = parseFloat((Math.random() * 10 - 5 + correctAnswer).toFixed(2));
     } else {
       randomAnswer = Math.floor(Math.random() * (max - min) + min + correctAnswer);
     }
-    if (!answers.includes(randomAnswer)) {
+    if (!answers.includes(randomAnswer) && randomAnswer !== correctAnswer) {
       answers.push(randomAnswer);
     }
   }
