@@ -53,10 +53,10 @@ function generateQuestion() {
   let answers;
   let difficultyLevel;
 
-  if (currentQuestion < 50) {
+  if (currentQuestion <= 20) {
     difficultyLevel = 1;
-    questionText = generateSimpleExpression();
-  } else if (currentQuestion < 100) {
+    questionText = generateEasyExpression();
+  } else if (currentQuestion <= 50) {
     difficultyLevel = 2;
     questionText = generateMediumExpression();
   } else {
@@ -76,58 +76,73 @@ function generateQuestion() {
   currentQuestion++;
 }
 
-function generateSimpleExpression() {
+function generateEasyExpression() {
   let num1 = Math.floor(Math.random() * 10) + 1;
   let num2 = Math.floor(Math.random() * 10) + 1;
-  let operator = Math.random() > 0.5 ? '+' : '*';
+  let operator = Math.random() > 0.5 ? '+' : '-';
 
-  correctAnswer = operator === '+' ? num1 + num2 : num1 * num2;
+  correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
   return `Qual é o resultado de ${num1} ${operator} ${num2}?`;
 }
 
 function generateMediumExpression() {
   let num1 = Math.floor(Math.random() * 20) + 1;
   let num2 = Math.floor(Math.random() * 20) + 1;
-  let num3 = Math.floor(Math.random() * 10) + 1;
-  let operators = ['+', '*', '/'];
-  let op1 = operators[Math.floor(Math.random() * 2)];
-  let op2 = operators[Math.floor(Math.random() * 3)];
+  let operator = ['+', '-', '*', '/'][Math.floor(Math.random() * 4)];
 
-  if (op2 === '/') num3 = Math.max(num3, 1); // Avoid division by zero
-  correctAnswer = eval(`${num1} ${op1} ${num2} ${op2} ${num3}`).toFixed(2);
-  correctAnswer = parseFloat(correctAnswer); // Convert to float if real number
+  if (operator === '/') {
+    correctAnswer = parseFloat((num1 / num2).toFixed(2)); // Aproximação com duas casas decimais
+  } else if (operator === '*') {
+    correctAnswer = num1 * num2;
+  } else if (operator === '-') {
+    correctAnswer = num1 - num2;
+  } else {
+    correctAnswer = num1 + num2;
+  }
 
-  return `Qual é o resultado de (${num1} ${op1} ${num2}) ${op2} ${num3}?`;
+  return `Qual é o resultado de ${num1} ${operator} ${num2}?`;
 }
 
 function generateHardExpression() {
-  let num1 = Math.floor(Math.random() * 50) + 1;
-  let num2 = Math.floor(Math.random() * 50) + 1;
-  let num3 = Math.floor(Math.random() * 30) + 1;
-  let operators = ['+', '*', '/'];
-  let op1 = operators[Math.floor(Math.random() * 3)];
-  let op2 = operators[Math.floor(Math.random() * 3)];
+  let type = Math.random();
+  
+  if (type < 0.25) {
+    // Pergunta de raiz quadrada
+    let num = Math.floor(Math.random() * 100) + 1;
+    correctAnswer = Math.round(Math.sqrt(num)); // Arredonda para o número inteiro mais próximo
+    return `Qual é o número inteiro mais próximo da raiz quadrada de ${num}?`;
+  } else {
+    // Soma, subtração, multiplicação ou divisão
+    let num1 = Math.floor(Math.random() * 50) + 1;
+    let num2 = Math.floor(Math.random() * 50) + 1;
+    let operator = ['+', '-', '*', '/'][Math.floor(Math.random() * 4)];
 
-  if (op2 === '/') num3 = Math.max(num3, 1); // Avoid division by zero
-  correctAnswer = eval(`${num1} ${op1} ${num2} ${op2} ${num3}`).toFixed(2);
-  correctAnswer = parseFloat(correctAnswer);
+    if (operator === '/') {
+      correctAnswer = parseFloat((num1 / num2).toFixed(2)); // Aproximação com duas casas decimais
+    } else if (operator === '*') {
+      correctAnswer = num1 * num2;
+    } else if (operator === '-') {
+      correctAnswer = num1 - num2;
+    } else {
+      correctAnswer = num1 + num2;
+    }
 
-  return `Qual é o resultado de (${num1} ${op1} ${num2}) ${op2} ${num3}?`;
+    return `Qual é o resultado de ${num1} ${operator} ${num2}?`;
+  }
 }
 
 function generateAnswers(correctAnswer, isReal) {
   let answers = [correctAnswer];
   let min = isReal ? -10 : -5;
   let max = isReal ? 10 : 5;
-  
+
   while (answers.length < 4) {
     let randomAnswer;
     if (isReal) {
-      randomAnswer = (Math.random() * (max - min) + min + correctAnswer).toFixed(2);
+      randomAnswer = parseFloat((Math.random() * (max - min) + min + correctAnswer).toFixed(2));
     } else {
       randomAnswer = Math.floor(Math.random() * (max - min) + min + correctAnswer);
     }
-    randomAnswer = parseFloat(randomAnswer); // Ensure it's a float if needed
     if (!answers.includes(randomAnswer)) {
       answers.push(randomAnswer);
     }
@@ -161,10 +176,9 @@ function updateLives() {
 }
 
 function calculateIQ() {
-  // Using a logarithmic scale to increase IQ dynamically based on score
   let baseIQ = 70;
   let iq = baseIQ + Math.round(30 * Math.log10(score + 1));
-  return Math.min(160, iq); // Cap IQ to 160 for fun
+  return Math.min(160, iq);
 }
 
 function endGame() {
